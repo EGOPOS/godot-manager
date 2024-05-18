@@ -1,3 +1,5 @@
 extends Node
 
 signal projects_scan_dirs_updated
+signal versions_scan_dirs_updated
+signal versions_for_configs_updated

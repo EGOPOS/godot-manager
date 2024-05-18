@@ -15,11 +15,18 @@ var projects_dirs: Array[String] = []
 
 func _ready():
 	EventBus.projects_scan_dirs_updated.connect(on_scan_dirs_updated)
+	EventBus.versions_for_configs_updated.connect(on_scan_dirs_updated)
 	update_projects()
 	run_button.pressed.connect(_run_project)
 	edit_button.pressed.connect(_edit_project)
 	settings_button.pressed.connect(settings_window.popup_centered)
 	exit_button.pressed.connect(get_tree().quit)
+	search_line_edit.text_changed.connect(func(text):
+		if not text.is_empty():
+			sort_projects_tree(sort_by_search.bind(text))
+		else:
+			_update_projects_tree(true)
+	)
 	
 	var disable_items = func():
 		run_button.disabled = true
@@ -60,7 +67,7 @@ var get_selected_project = func():
 func get_project_version(project):
 	return projects_configs[project]["version"]
 
-func _update_projects_tree():
+func _update_projects_tree(auto_collapse: bool = true):
 	projects_tree.clear()
 	projects_dirs_by_item.clear()
 	var root_item: TreeItem = projects_tree.create_item()
@@ -68,7 +75,7 @@ func _update_projects_tree():
 	for scan_dir in SaveManager.get_key("settings", "projects_scan_dirs"):
 		var dir_item: TreeItem = projects_tree.create_item(root_item)
 		dir_item.set_text(0, scan_dir)
-		dir_item.collapsed = true
+		dir_item.collapsed = auto_collapse
 		
 		dir_item.set_icon(0, preload("res://assets/icons/folder.png"))
 		
@@ -77,6 +84,10 @@ func _update_projects_tree():
 			config.load(project + "/project.godot")
 			if not config.has_section_key("application", "config/name"): continue
 			var project_name = str(config.get_value("application", "config/name"))
+			
+			var project_icon_path = project_res_path_to_system(project, config.get_value("application", "config/icon"))
+			var project_icon: ImageTexture = ImageTexture.create_from_image(Image.new().load_from_file(project_icon_path))
+			
 			var project_item: TreeItem = projects_tree.create_item(dir_item)
 			
 			projects_dirs_by_item[project_item] = {
@@ -91,8 +102,11 @@ func _update_projects_tree():
 			project_item.set_tooltip_text(0, projects_configs[project]["version"].get_file())
 			project_item.set_suffix(0, projects_configs[project]["version"].get_file())
 			
-			project_item.set_icon(0, preload("res://assets/icons/godot.png"))
+			project_item.set_icon(0, project_icon)#preload("res://assets/icons/godot.png"))
 			#project_item.set_text_alignment(0, HORIZONTAL_ALIGNMENT_CENTER)
+
+func project_res_path_to_system(project, res_path):
+	return str(res_path).replace("res:/", project)
 
 func _update_projects_dirs():
 	projects_dirs.clear()
@@ -109,3 +123,13 @@ func _update_projects_dirs():
 				Debug.out = current_dir
 			else:
 				unchecked_dirs.append_array(Array(dirs).map(func(a): return dir + "/" + a))
+
+func sort_projects_tree(sort_callable: Callable):
+	projects_dirs.sort_custom(sort_callable)
+	_update_projects_tree(false)
+
+func sort_by_name(a: String, b: String):
+	return a.to_int() > b.to_int()
+
+func sort_by_search(a: String, b: String, request: String):
+	return a.similarity(request) > b.similarity(request)

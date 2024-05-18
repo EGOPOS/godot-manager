@@ -56,6 +56,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 1.7
 focus_mode = 0
+theme_override_constants/icon_max_width = 64
 hide_root = true
 
 [node name="MarginContainer" type="MarginContainer" parent="Control/PanelContainer/HBoxContainer"]
@@ -109,7 +110,6 @@ title = "Настройки"
 position = Vector2i(0, 36)
 size = Vector2i(600, 600)
 visible = false
-always_on_top = true
 min_size = Vector2i(400, 400)
 script = ExtResource("2_kac3v")
 
