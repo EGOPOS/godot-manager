@@ -1,12 +1,23 @@
-[gd_scene load_steps=7 format=3 uid="uid://dmc1kbsxbs5lt"]
+[gd_scene load_steps=9 format=3 uid="uid://dmc1kbsxbs5lt"]
 
 [ext_resource type="Script" path="res://app/main/main.gd" id="1_0vo3i"]
 [ext_resource type="Script" path="res://app/main/settings_window.gd" id="2_kac3v"]
 [ext_resource type="Texture2D" uid="uid://jq6c0vt8aull" path="res://assets/icons/search.png" id="2_vu4k5"]
 [ext_resource type="PackedScene" uid="uid://by1v4kttdjsd6" path="res://app/main/settings_content.tscn" id="3_dme4h"]
 [ext_resource type="Texture2D" uid="uid://dxmfuaa527k6e" path="res://assets/icons/settings.png" id="3_qwmqg"]
+[ext_resource type="PackedScene" uid="uid://6c0qmw6qsnb4" path="res://app/main/create_content.tscn" id="7_rl3pg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qqtmj"]
+
+[sub_resource type="GDScript" id="GDScript_d6bd3"]
+script/source = "extends Window
+
+func _ready():
+	close_requested.connect(on_close_request)
+
+func on_close_request():
+	hide()
+"
 
 [node name="Main" type="Node"]
 script = ExtResource("1_0vo3i")
@@ -72,17 +83,35 @@ theme_override_constants/margin_bottom = 10
 layout_mode = 2
 theme_override_constants/separation = 5
 
+[node name="CreateButton" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "Создать"
+
 [node name="EditButton" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 text = "Редактировать"
 
-[node name="RunButton" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="RunButton" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
 text = "Запустить"
+
+[node name="RunOptionsButton" type="Button" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+focus_mode = 0
+theme_override_constants/icon_max_width = 24
+icon = ExtResource("3_qwmqg")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/PanelContainer/HBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -95,6 +124,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 focus_mode = 0
+theme_override_constants/icon_max_width = 24
 text = "Настройки"
 icon = ExtResource("3_qwmqg")
 
@@ -114,3 +144,108 @@ min_size = Vector2i(400, 400)
 script = ExtResource("2_kac3v")
 
 [node name="Control" parent="SettingsWindow" instance=ExtResource("3_dme4h")]
+
+[node name="CreateWindow" type="Window" parent="."]
+title = "Создать"
+initial_position = 2
+size = Vector2i(500, 300)
+visible = false
+script = SubResource("GDScript_d6bd3")
+
+[node name="Control" parent="CreateWindow" instance=ExtResource("7_rl3pg")]
+
+[node name="RunOptionsWindow" type="Window" parent="."]
+title = "Параметры запуска"
+initial_position = 2
+size = Vector2i(300, 300)
+visible = false
+script = SubResource("GDScript_d6bd3")
+
+[node name="Control" type="Control" parent="RunOptionsWindow"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="RunOptionsWindow/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="RunOptionsWindow/Control/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Запуск с консолью"
+
+[node name="CheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+focus_mode = 0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Видимые области соприкосновения"
+autowrap_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+focus_mode = 0
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Видимые пути"
+autowrap_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+focus_mode = 0
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Видимая навигация"
+autowrap_mode = 2
+
+[node name="CheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+focus_mode = 0
