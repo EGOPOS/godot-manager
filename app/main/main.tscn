@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dmc1kbsxbs5lt"]
+[gd_scene load_steps=10 format=3 uid="uid://dmc1kbsxbs5lt"]
 
 [ext_resource type="Script" path="res://app/main/main.gd" id="1_0vo3i"]
 [ext_resource type="Script" path="res://app/main/settings_window.gd" id="2_kac3v"]
@@ -17,6 +17,30 @@ func _ready():
 
 func on_close_request():
 	hide()
+"
+
+[sub_resource type="GDScript" id="GDScript_u85va"]
+script/source = "extends Control
+
+@onready var console_check_box = %ConsoleCheckBox
+@onready var debug_collision_check_box = %DebugCollisionCheckBox
+@onready var debug_paths_check_box = %DebugPathsCheckBox
+@onready var debug_navigation_check_box = %DebugNavigationCheckBox
+@onready var debug_avoidance_check_box = %DebugAvoidanceCheckBox
+
+func get_run_args():
+	var args = []
+	if console_check_box.button_pressed:
+		args.append(\"--debug\")
+	if debug_collision_check_box.button_pressed:
+		args.append(\"--debug-collisions\")
+	if debug_paths_check_box.button_pressed:
+		args.append(\"--debug-paths\")
+	if debug_navigation_check_box.button_pressed:
+		args.append(\"--debug-navigation\")
+	if debug_avoidance_check_box.button_pressed:
+		args.append(\"--debug-avoidance\")
+	return args
 "
 
 [node name="Main" type="Node"]
@@ -168,6 +192,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = SubResource("GDScript_u85va")
 
 [node name="PanelContainer" type="PanelContainer" parent="RunOptionsWindow/Control"]
 layout_mode = 1
@@ -189,6 +214,7 @@ layout_mode = 2
 theme_override_constants/separation = 5
 
 [node name="HBoxContainer" type="HBoxContainer" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
@@ -196,7 +222,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Запуск с консолью"
 
-[node name="CheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="ConsoleCheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 size_flags_vertical = 4
@@ -212,7 +239,8 @@ size_flags_stretch_ratio = 2.0
 text = "Видимые области соприкосновения"
 autowrap_mode = 2
 
-[node name="CheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="DebugCollisionCheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 size_flags_vertical = 4
@@ -228,7 +256,8 @@ size_flags_stretch_ratio = 2.0
 text = "Видимые пути"
 autowrap_mode = 2
 
-[node name="CheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+[node name="DebugPathsCheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 size_flags_vertical = 4
@@ -244,7 +273,25 @@ size_flags_stretch_ratio = 2.0
 text = "Видимая навигация"
 autowrap_mode = 2
 
-[node name="CheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer4"]
+[node name="DebugNavigationCheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer4"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+focus_mode = 0
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer5"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Видимый avoidance"
+autowrap_mode = 2
+
+[node name="DebugAvoidanceCheckBox" type="CheckBox" parent="RunOptionsWindow/Control/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer5"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 size_flags_vertical = 4

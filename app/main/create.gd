@@ -94,18 +94,23 @@ func get_godot_version():
 func create_project(project_data):
 	if not DirAccess.dir_exists_absolute(project_data.dir):
 		DirAccess.make_dir_absolute(project_data.dir)
-
+	
 	var files = DirAccess.get_files_at(project_data.template)
 	var dirs = DirAccess.get_directories_at(project_data.template)
+	
 	for dir in dirs:
-		dirs.append_array(Array(DirAccess.get_directories_at(project_data.template+dir)).map(func(a): return dir+"/"+a))
-		files.append_array(Array(DirAccess.get_files_at(project_data.template+dir)).map(func(a): return dir+"/"+a))
+		dirs.append_array(Array(DirAccess.get_directories_at(project_data.template+dir)).map(func(a):
+			return dir+"/"+a))
+		files.append_array(Array(DirAccess.get_files_at(project_data.template+dir)).map(func(a):
+			return dir+"/"+a))
 	for file in files:
-		var new_file_dir = String(project_data.dir+file).get_base_dir()+"/"
+		var new_file_dir = String(project_data.dir + file).get_base_dir()+"/"
 		if not DirAccess.dir_exists_absolute(new_file_dir):
 			DirAccess.make_dir_absolute(new_file_dir)
+			print(new_file_dir)
 		
 		var new_file = FileAccess.open(project_data.dir+file, FileAccess.WRITE)
+		if not new_file: continue
 		
 		var exist_file = FileAccess.open(project_data.template+file, FileAccess.READ)
 		new_file.store_buffer(exist_file.get_buffer(exist_file.get_length()))
@@ -129,4 +134,4 @@ func get_project_data():
 	}
 
 func system_to_godot_dir(dir):
-	return dir.replace("\\", "/")+"/"
+	return (dir.replace("\\", "/")+"/").replace("//", "/")

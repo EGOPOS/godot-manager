@@ -12,6 +12,7 @@ var projects_dirs: Array[String] = []
 @onready var exit_button = %ExitButton
 @onready var create_button = %CreateButton
 @onready var run_options_button = %RunOptionsButton
+@onready var run_options = $RunOptionsWindow/Control
 
 @onready var settings_window = $SettingsWindow
 @onready var create_window = $CreateWindow
@@ -65,7 +66,10 @@ func _edit_project(project: String = get_selected_project.call(), version = get_
 
 func open_godot(project: String, version, edit = false):
 	var output = []
-	OS.execute(version, ["--path", project, "-e" if edit else ""], output)
+	var args = ["--path", project]
+	args.append("-e" if edit else "")
+	args.append_array(run_options.get_run_args())
+	OS.execute(version, args, output)
 	Debug.out = project
 	Debug.out = output
 
